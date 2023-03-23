@@ -61,19 +61,5 @@ app.delete("/todos/:todoId", async (req, res) => {
 });
 
 app.listen(port, () => {
-  setTimeout(() => {
-    db.schema
-        .createTable("todos", (table) => {
-          table.increments('id');
-          table.string('title');
-          table.string('description');
-        })
-        .then(() => {
-          console.log("Table ${config.TABLE} crée");
-        })
-        .catch((error) => {
-          console.error(error);
-        });
-  }, 10000);
   console.log(`Example app listening on port ${port}`);
 });
