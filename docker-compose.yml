@@ -1,19 +1,39 @@
-version: "3.8"
+version: "3.9"
+
 services:
-  frontend:
-    build: ./frontend
+  mysql:
+    image: mysql:8.0
+    env_file:
+      - .env
     ports:
-      - "4000:3000"
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${DB_NAME}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
   backend:
-    build: ./backend
+    build:
+      context: .
+      dockerfile: Dockerfile
+    env_file:
+      - .env
     ports:
       - "4001:4001"
     depends_on:
       - mysql
-  mysql:
-    image: mysql:8.0
-    ports:
-      - "3306:3306"
     environment:
-      - MYSQL_ROOT_PASSWORD=root
-      - MYSQL_DATABASE=todos
+      DB_HOST: ${DB_HOST}
+      DB_PORT: ${DB_PORT}
+      DB_PASSWORD: ${DB_PASSWORD}
+      DB_NAME: ${DB_NAME}
+  frontend:
+    build: ./frontend
+    restart: always
+    env_file:
+      - .env
+    ports:
+      - "4000:3000"
+    depends_on:
+      - backend
+    environment:
+      BACKEND_URL: http://backend:4001
