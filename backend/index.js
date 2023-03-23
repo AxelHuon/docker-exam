@@ -1,6 +1,7 @@
 const express = require("express");
 const config = require("./db.config");
 
+
 const db = require("knex")({
   client: "mysql2",
   connection: {
@@ -12,6 +13,7 @@ const db = require("knex")({
   },
 });
 
+
 const cors = require("cors");
 const app = express();
 
@@ -19,19 +21,58 @@ const port = 4001
 app.use(express.json());
 app.use(cors());
 
+
+
 app.get("/todos", async (req, res) => {
-  //TO_MODIFY
-  res.send([]) // to remove after question 1)
+  try {
+    const todos = await db.select("*").from("todos");
+    res.send(todos);
+  } catch (error) {
+    res.status(500).send({ message: "Error retrieving todos" });
+  }
 });
 
 app.post("/todos", async (req, res) => {
-  //TO_MODIFY
+  const { title } = req.body;
+  
+  if (!title) {
+    res.status(400).send({ message: "Title is required" });
+    return;
+  }
+  
+  try {
+    const [id] = await db("todos").insert({ title });
+    const todo = await db("todos").where("id", id).first();
+    res.send(todo);
+  } catch (error) {
+    res.status(500).send({ message: error });
+  }
 });
 
 app.delete("/todos/:todoId", async (req, res) => {
-  //TO_MODIFY
+  const { todoId } = req.params;
+  
+  try {
+    await db("todos").where("id", todoId).del();
+    res.status(204).send();
+  } catch (error) {
+    res.status(500).send({ message: "Error deleting todo" });
+  }
 });
 
 app.listen(port, () => {
+  setTimeout(() => {
+    db.schema
+        .createTable("todos", (table) => {
+          table.increments('id');
+          table.string('title');
+        })
+        .then(() => {
+          console.log("Table ${config.TABLE} crée");
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+  }, 10000);
   console.log(`Example app listening on port ${port}`);
 });
