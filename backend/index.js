@@ -33,7 +33,7 @@ app.get("/todos", async (req, res) => {
 });
 
 app.post("/todos", async (req, res) => {
-  const { title } = req.body;
+  const { title, description } = req.body;
   
   if (!title) {
     res.status(400).send({ message: "Title is required" });
@@ -41,7 +41,7 @@ app.post("/todos", async (req, res) => {
   }
   
   try {
-    const [id] = await db("todos").insert({ title });
+    const [id] = await db("todos").insert({ title,description });
     const todo = await db("todos").where("id", id).first();
     res.send(todo);
   } catch (error) {
@@ -66,6 +66,7 @@ app.listen(port, () => {
         .createTable("todos", (table) => {
           table.increments('id');
           table.string('title');
+          table.string('description');
         })
         .then(() => {
           console.log("Table ${config.TABLE} crée");

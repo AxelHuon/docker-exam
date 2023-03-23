@@ -13,7 +13,9 @@ const App = () => {
   const fetchTodos = () => {
     getTodos()
       .then(({ data }) => {
-        setTodos(data);
+          if (data){
+            setTodos(data);
+          }
       })
       .then(console.log)
       .catch((err) => console.log(err));
@@ -35,16 +37,16 @@ const App = () => {
       })
       .catch((err) => console.log(err));
   };
-
-  return (
-    <main className="App">
-      <h1>My Todos</h1>
-      <AddTodo saveTodo={handleCreateTodo} />
-      {todos.map((todo) => (
-        <TodoItem key={todo.id} deleteTodo={handleDeleteTodo} todo={todo} />
-      ))}
-    </main>
-  );
+  
+    return (
+        <main className="App">
+            <h1>My Todos</h1>
+            <AddTodo saveTodo={handleCreateTodo} />
+            {todos.map((todo) => (
+                <TodoItem key={todo.id} deleteTodo={handleDeleteTodo} todo={todo} />
+            ))}
+        </main>
+    );
 };
 
 export default App;

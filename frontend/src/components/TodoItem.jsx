@@ -4,8 +4,8 @@ const Todo = ({ todo, deleteTodo }) => {
   return (
     <div className="Card">
       <div className="Card--text">
-        <h1>{todo.name}</h1>
-        <span>{todo.description}</span>
+        <h1>{todo.title}</h1>
+        <p>{todo.description}</p>
       </div>
       <div className="Card--button">
         <button
